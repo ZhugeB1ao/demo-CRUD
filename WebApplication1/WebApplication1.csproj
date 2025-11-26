@@ -26,6 +26,14 @@
       <_ContentIncludedByDefault Remove="Views\Shop\Category\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Product\index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Shop\Product\index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\About\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Blog\BlogSingle.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Blog\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Checkout\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Contact\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Components\ShopView\Default.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
