@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
+using WebApplication1.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Controllers;
 
@@ -9,11 +12,13 @@ namespace WebApplication1.Controllers;
 public class CartController : Controller
 {
     private readonly AppDBContext _context;
+    private readonly UserManager<AppUser> _userManager;
     private const string CartSessionKey = "ShoppingCart";
 
-    public CartController(AppDBContext context)
+    public CartController(AppDBContext context, UserManager<AppUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -186,6 +191,127 @@ public class CartController : Controller
     {
         var cart = GetCart();
         return Json(new { count = cart.Sum(c => c.Quantity ?? 0) });
+    }
+
+    /// <summary>
+    /// Checkout - requires user to be logged in
+    /// Creates an Order and saves to database
+    /// </summary>
+    [HttpPost("Checkout")]
+    public async Task<IActionResult> Checkout()
+    {
+        // Check if user is logged in
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            // Redirect to login page
+            return RedirectToAction("Login", "User");
+        }
+
+        // Get cart from session
+        var cart = GetCart();
+        if (cart.Count == 0)
+        {
+            TempData["Error"] = "Your cart is empty!";
+            return RedirectToAction("Index");
+        }
+
+        try
+        {
+            // First, create the order (without items)
+            var order = new Order
+            {
+                UserId = user.Id,
+                Status = "Pending",
+                CreatedAt = DateTime.Now,
+                Total = 0,
+                OrderProducts = new List<OrderProduct>()
+            };
+
+            // Add order to context first
+            _context.Orders.Add(order);
+            
+            // Save to get the Order ID
+            await _context.SaveChangesAsync();
+
+            // Now add order products
+            decimal total = 0;
+            foreach (var item in cart)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    decimal price = product.Price;
+                    int quantity = item.Quantity.HasValue ? item.Quantity.Value : 1;
+                    total += price * quantity;
+
+                    // Create OrderProduct with proper foreign keys
+                    var orderProduct = new OrderProduct
+                    {
+                        OrderId = order.Id ?? 0,  // Now we have the Order ID
+                        ProductId = product.Id,
+                        Quantity = quantity,
+                        Price = (double)price  // Store price at time of purchase
+                    };
+
+                    _context.OrderProducts.Add(orderProduct);
+                }
+            }
+
+            // Update order total
+            order.Total = total;
+            
+            // Save all order products and update order
+            await _context.SaveChangesAsync();
+
+            // Clear the cart from session
+            HttpContext.Session.Remove(CartSessionKey);
+
+            // Redirect to success page or back to shop
+            TempData["Success"] = "Order placed successfully!";
+            return RedirectToAction("Index", "Shop");
+        }
+        catch (Exception)
+        {
+            TempData["Error"] = "An error occurred while placing the order. Please try again.";
+            return RedirectToAction("Index");
+        }
+    }
+
+    /// <summary>
+    /// Get payment history for logged-in user
+    /// Returns HTML for the modal
+    /// </summary>
+    [HttpGet("PaymentHistory")]
+    public async Task<IActionResult> PaymentHistory()
+    {
+        // Check if user is logged in
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        // Get all orders for this user with OrderProducts included
+        var orders = await _context.Orders
+            .Where(o => o.UserId == user.Id)
+            .Include(o => o.OrderProducts)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
+
+        // Load products for each order item
+        foreach (var order in orders)
+        {
+            if (order.OrderProducts != null)
+            {
+                foreach (var item in order.OrderProducts)
+                {
+                    item.Product = await _context.Products.FindAsync(item.ProductId);
+                }
+            }
+        }
+
+        return PartialView("_PaymentHistoryPartial", orders);
     }
 
     #region Helper Methods

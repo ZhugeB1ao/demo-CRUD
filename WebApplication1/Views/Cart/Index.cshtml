@@ -105,7 +105,11 @@
                             <span style="font-size: 21px; font-weight: 600;">Total</span>
                             <span style="font-size: 21px; font-weight: 600;">$@total</span>
                         </div>
-                        <a href="#" class="apple-btn apple-btn-primary" style="width: 100%; display: block; padding: 16px; text-align: center;">Checkout</a>
+                        <form asp-controller="Cart" asp-action="Checkout" method="post">
+                            <button type="submit" class="apple-btn apple-btn-primary" style="width: 100%; padding: 16px; border: none; cursor: pointer;">
+                                <i class="fas fa-credit-card"></i> Checkout
+                            </button>
+                        </form>
                         <a asp-controller="Shop" asp-action="Index" class="apple-btn apple-btn-text" style="width: 100%; display: block; margin-top: 16px; text-align: center;">Continue Shopping</a>
                         
                         <form asp-controller="Cart" asp-action="ClearCart" method="post" style="margin-top: 16px;">

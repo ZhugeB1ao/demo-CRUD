@@ -1,6 +1,9 @@
 namespace WebApplication1.ViewModels;
 
-public class PaginationViewModel<T>
+public class 
+    
+    
+    PaginationViewModel<T>
 {
     public List<T> Items { get; set; } = new();
     public int CurrentPage { get; set; } = 1;
