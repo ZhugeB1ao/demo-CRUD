@@ -1,0 +1,64 @@
+@model IEnumerable<WebApplication1.Models.Product>
+
+@{
+    ViewData["Title"] = "Manage Products";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Manage Products</h1>
+
+<p>
+    <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<form asp-area="Admin" asp-controller="Product" asp-action="Index" method="get">
+    <p>
+        Title: <input type="text" name="SearchString" />
+        <input type="submit" value="Filter" class="btn btn-secondary" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Picture)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.Picture))
+                {
+                    <img src="@item.Picture" width="100" height="100" alt="Product image" />
+                }
+            </td>
+            <td>
+                <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a> |
+                <a asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

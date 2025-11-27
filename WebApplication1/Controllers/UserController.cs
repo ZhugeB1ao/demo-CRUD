@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.AppData;
-using WebApplication1.Models;
+using WebApplication1.Data;
+using WebApplication1.Data.Entities;
+using WebApplication1.ViewModels;
 
 namespace WebApplication1.Controllers;
 
@@ -12,19 +13,22 @@ public class UserController : Controller
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
     private readonly IUserStore<AppUser> _userStore;
+    private readonly RoleManager<IdentityRole> _roleManager;
     
     public UserController(
         ILogger<UserController> logger, 
         AppDBContext context, 
         UserManager<AppUser> userManager,
         IUserStore<AppUser> userStore,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _logger = logger;
         _context = context;
         _userManager = userManager;
         _userStore = userStore;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
     
     // GET
@@ -56,10 +60,24 @@ public class UserController : Controller
             
             // await _emailStore.SetEmailAsync(user, model.Email, CancellationToken.None);
             
+            user.Role = "User"; // Set default role property
+            
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
+                // Ensure roles exist
+                if (!await _roleManager.RoleExistsAsync("Admin"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                }
+                if (!await _roleManager.RoleExistsAsync("User"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("User"));
+                }
+
+                // Assign role to user
+                await _userManager.AddToRoleAsync(user, "User");
                 _logger.LogInformation("User created a new account with password.");
 
                 // var userId = await _userManager.GetUserIdAsync(user);
@@ -116,6 +134,13 @@ public class UserController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in.");
+                
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Product", new { area = "Admin" });
+                }
+                
                 return RedirectToAction("Index", "Shop");
             }
             // if (result.RequiresTwoFactor)
@@ -141,6 +166,59 @@ public class UserController : Controller
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Shop");
+    }
+
+    // Tạo hoặc cập nhật Admin user - truy cập: /User/SeedAdmin
+    public async Task<IActionResult> SeedAdmin()
+    {
+        // Đảm bảo role Admin tồn tại
+        if (!await _roleManager.RoleExistsAsync("Admin"))
+        {
+            await _roleManager.CreateAsync(new IdentityRole("Admin"));
+        }
+        if (!await _roleManager.RoleExistsAsync("User"))
+        {
+            await _roleManager.CreateAsync(new IdentityRole("User"));
+        }
+
+        // Tìm hoặc tạo admin user
+        var adminEmail = "admin@admin.com";
+        var adminUser = await _userManager.FindByEmailAsync(adminEmail);
+        
+        if (adminUser == null)
+        {
+            // Tạo admin mới
+            adminUser = new AppUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                FullName = "Administrator",
+                EmailConfirmed = true,
+                Role = "Admin"
+            };
+            
+            var result = await _userManager.CreateAsync(adminUser, "Admin@123");
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(adminUser, "Admin");
+                return Content("Admin user created successfully! Email: admin@admin.com, Password: Admin@123");
+            }
+            else
+            {
+                return Content("Failed to create admin: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+        }
+        else
+        {
+            // Đảm bảo user đã có role Admin
+            if (!await _userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await _userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+            adminUser.Role = "Admin";
+            await _userManager.UpdateAsync(adminUser);
+            return Content("Admin role assigned to existing user: " + adminEmail);
+        }
     }
 
     private AppUser CreateUser()

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.AppData;
+using WebApplication1.Data;
 
 namespace WebApplication1.Components;
 

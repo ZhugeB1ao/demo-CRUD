@@ -1,0 +1,657 @@
+/* ========================================
+   Apple-Style Phone Store CSS
+   Professional, minimal design inspired by Apple
+   ======================================== */
+
+/* ========================================
+   1. ROOT VARIABLES & RESET
+   ======================================== */
+:root {
+    --color-primary: #000000;
+    --color-primary-hover: #1d1d1f;
+    --color-text: #1d1d1f;
+    --color-text-secondary: #6e6e73;
+    --color-bg: #ffffff;
+    --color-bg-secondary: #f5f5f7;
+    --color-border: #d2d2d7;
+    --color-success: #34c759;
+    --color-error: #ff3b30;
+    
+    --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 17px;
+    --font-size-lg: 21px;
+    --font-size-xl: 28px;
+    --font-size-2xl: 40px;
+    --font-size-3xl: 56px;
+    
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 40px;
+    --spacing-xl: 64px;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.47059;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+}
+
+/* ========================================
+   2. TYPOGRAPHY
+   ======================================== */
+.apple-heading-1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 600;
+    line-height: 1.07143;
+    letter-spacing: -0.005em;
+    margin-bottom: var(--spacing-md);
+}
+
+.apple-heading-2 {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-heading-3 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    line-height: 1.19048;
+    letter-spacing: 0.011em;
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-text-secondary {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+}
+
+/* ========================================
+   3. NAVIGATION
+   ======================================== */
+.apple-nav {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.apple-nav .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.apple-nav-brand {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.apple-nav-brand:hover {
+    opacity: 0.7;
+    color: var(--color-text);
+}
+
+.apple-nav-link {
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    text-decoration: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    transition: opacity 0.3s ease;
+    display: inline-block;
+}
+
+.apple-nav-link:hover {
+    opacity: 0.7;
+    color: var(--color-text);
+}
+
+.apple-top-bar {
+    background-color: var(--color-text);
+    color: white;
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) 0;
+}
+
+.apple-top-bar a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.apple-top-bar a:hover {
+    opacity: 1;
+    color: white;
+}
+
+/* ========================================
+   4. BUTTONS
+   ======================================== */
+.apple-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+.apple-btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.apple-btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.apple-btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.apple-btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.apple-btn-text {
+    background-color: transparent;
+    color: var(--color-primary);
+    padding: 8px 16px;
+}
+
+.apple-btn-text:hover {
+    text-decoration: underline;
+    color: var(--color-primary-hover);
+}
+
+.apple-btn-dark {
+    background-color: var(--color-text);
+    color: white;
+}
+
+.apple-btn-dark:hover {
+    background-color: #424245;
+    color: white;
+}
+
+/* ========================================
+   5. PRODUCT CARDS
+   ======================================== */
+.apple-product-card {
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-border);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.apple-product-card:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-text);
+    transform: translateY(-2px);
+}
+
+.apple-product-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background-color: var(--color-bg-secondary);
+    transition: transform 0.3s ease;
+}
+
+.apple-product-card:hover .apple-product-image {
+    transform: scale(1.05);
+}
+
+.apple-product-image-wrapper {
+    overflow: hidden;
+    background-color: var(--color-bg-secondary);
+}
+
+.apple-product-info {
+    padding: var(--spacing-md);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.apple-product-name {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    text-decoration: none;
+    display: block;
+}
+
+.apple-product-name:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+.apple-product-price {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-product-actions {
+    margin-top: auto;
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+/* ========================================
+   6. FORMS
+   ======================================== */
+.apple-form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.apple-form-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.apple-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+.apple-form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+}
+
+.apple-form-select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+    cursor: pointer;
+    font-family: var(--font-primary);
+}
+
+/* ========================================
+   7. CART & TABLES
+   ======================================== */
+.apple-cart-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: var(--color-bg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.apple-cart-table thead {
+    background-color: var(--color-bg-secondary);
+}
+
+.apple-cart-table th {
+    padding: var(--spacing-sm);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.apple-cart-table td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.apple-cart-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.apple-cart-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-secondary);
+}
+
+.apple-cart-total {
+    background-color: var(--color-bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+}
+
+/* ========================================
+   8. CATEGORY SIDEBAR
+   ======================================== */
+.apple-category-sidebar {
+    background-color: var(--color-bg);
+}
+
+.apple-category-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.apple-category-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.apple-category-item {
+    margin-bottom: var(--spacing-xs);
+}
+
+.apple-category-link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    display: block;
+    padding: var(--spacing-xs) 0;
+    transition: color 0.3s ease;
+}
+
+.apple-category-link:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+.apple-category-sublist {
+    list-style: none;
+    padding-left: var(--spacing-md);
+    margin-top: var(--spacing-xs);
+}
+
+/* ========================================
+   9. HERO & BREADCRUMBS
+   ======================================== */
+.apple-hero {
+    background-color: var(--color-bg-secondary);
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+}
+
+.apple-breadcrumb {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-breadcrumb a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+}
+
+.apple-breadcrumb a:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+/* ========================================
+   10. PAGINATION
+   ======================================== */
+.apple-pagination {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-lg);
+}
+
+.apple-pagination a,
+.apple-pagination span {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.apple-pagination a:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+    border-color: var(--color-text);
+}
+
+.apple-pagination .active {
+    background-color: var(--color-text);
+    color: white;
+    border-color: var(--color-text);
+}
+
+/* ========================================
+   11. FOOTER
+   ======================================== */
+.apple-footer {
+    background-color: var(--color-bg-secondary);
+    padding: var(--spacing-xl) 0 var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.apple-footer-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.apple-footer-title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+.apple-footer-link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    display: block;
+    padding: 4px 0;
+    transition: color 0.3s ease;
+}
+
+.apple-footer-link:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+.apple-footer-bottom {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+/* ========================================
+   12. UTILITIES
+   ======================================== */
+.apple-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.apple-section {
+    padding: var(--spacing-xl) 0;
+}
+
+.apple-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.apple-grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.apple-grid-4 {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.apple-text-center {
+    text-align: center;
+}
+
+.apple-mt-lg {
+    margin-top: var(--spacing-lg);
+}
+
+.apple-mb-lg {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ========================================
+   13. PRODUCT DETAIL
+   ======================================== */
+.apple-product-detail-image {
+    width: 100%;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-secondary);
+}
+
+.apple-product-detail-info {
+    padding: var(--spacing-lg);
+}
+
+.apple-quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.apple-quantity-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.apple-quantity-btn:hover {
+    background-color: var(--color-bg-secondary);
+}
+
+.apple-quantity-input {
+    width: 60px;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+}
+
+/* ========================================
+   14. RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    :root {
+        --font-size-3xl: 40px;
+        --font-size-2xl: 32px;
+        --font-size-xl: 24px;
+        --spacing-xl: 40px;
+        --spacing-lg: 32px;
+    }
+    
+    .apple-grid-3,
+    .apple-grid-4 {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* ========================================
+   15. ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.apple-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* ========================================
+   16. OVERRIDES FOR EXISTING STYLES
+   ======================================== */
+.bg-light {
+    background-color: var(--color-bg) !important;
+}
+
+.ftco-section {
+    padding: var(--spacing-xl) 0;
+}

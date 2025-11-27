@@ -1,31 +1,16 @@
 @model WebApplication1.Models.Product
 
-<div class="col-sm-6 col-md-6 col-lg-4 ftco-animate">
-    <div class="product">
-        <a href="/Product/Detail/@Model.Id" class="img-prod">
-            <img class="img-fluid" src="@Model.Picture" alt="@Model.Name">
-            <div class="overlay"></div>
+<div class="col-sm-6 col-md-6 col-lg-4 mb-4">
+    <div class="apple-product-card">
+        <a href="/Product/Detail/@Model.Id" class="apple-product-image-wrapper">
+            <img class="apple-product-image" src="@Model.Picture" alt="@Model.Name">
         </a>
-        <div class="text py-3 px-3">
-            <h3><a href="#">@Model.Name</a></h3>
-            <div class="d-flex">
-                <div class="pricing">
-                    <p class="price"><span class="price">$@Model.Price</span></p>
-                </div>
-                <div class="rating">
-                    <p class="text-right">
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                        }
-                    </p>
-                </div>
+        <div class="apple-product-info">
+            <a href="/Product/Detail/@Model.Id" class="apple-product-name">@Model.Name</a>
+            <div class="apple-product-price">$@Model.Price</div>
+            <div class="apple-product-actions">
+                <a href="/Product/Detail/@Model.Id" class="apple-btn apple-btn-primary" style="flex: 1; text-align: center;">View Details</a>
             </div>
-            <p class="bottom-area d-flex px-3">
-                <a href="#" class="add-to-cart text-center py-2 mr-1"><span>Add to cart</span></a>
-                <a href="#" class="buy-now text-center py-2">Buy now</a>
-            </p>
         </div>
     </div>
 </div>
-

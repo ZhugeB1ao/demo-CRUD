@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.AppData;
+using WebApplication1.Data;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -41,7 +41,7 @@ public class ProductController : Controller
 
         // Get all Product of current Category or child Category
         var products = _context.Products
-            .Where(p => childCategoryIds.Contains(p.CategoryId))
+            .Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value))
             .ToList();
 
         return View("../Shop/Index", products);
