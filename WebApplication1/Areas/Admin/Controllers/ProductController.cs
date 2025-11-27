@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Helpers;
 using WebApplication1.Models;
 
 namespace WebApplication1.Areas.Admin.Controllers
@@ -13,6 +14,7 @@ namespace WebApplication1.Areas.Admin.Controllers
     {
         private readonly AppDBContext _context;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private const int PageSize = 10; // Items per page for admin
 
         public ProductController(AppDBContext context, IWebHostEnvironment hostEnvironment)
         {
@@ -20,17 +22,35 @@ namespace WebApplication1.Areas.Admin.Controllers
             _hostEnvironment = hostEnvironment;
         }
 
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, int page = 1)
         {
-            var products = from p in _context.Products.Include(p => p.Category)
-                           select p;
+            // Validate page number
+            if (page < 1) page = 1;
+            
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                products = products.Where(s => s.Name!.Contains(searchString));
+                query = query.Where(s => s.Name!.Contains(searchString));
             }
 
-            return View(await products.ToListAsync());
+            var totalCount = await query.CountAsync();
+            
+            // Calculate pagination
+            var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            var products = await query
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+
+            var paginatedList = new PaginatedList<Product>(products, totalCount, page, PageSize);
+            
+            // Pass search string to view for form
+            ViewData["SearchString"] = searchString;
+            
+            return View(paginatedList);
         }
 
         public IActionResult Create()

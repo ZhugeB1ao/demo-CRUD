@@ -1,0 +1,164 @@
+@{
+    var routeData = ViewContext.RouteData.Values;
+    var controller = routeData["controller"]?.ToString() ?? "";
+    var action = routeData["action"]?.ToString() ?? "";
+    var area = routeData.ContainsKey("area") ? routeData["area"]?.ToString() : "";
+    var isAdmin = !string.IsNullOrEmpty(area) && area == "Admin";
+    
+    // Get the model through ViewData
+    dynamic paginationModel = ViewData.Model;
+    
+    if (paginationModel == null)
+    {
+        return;
+    }
+}
+
+@if (paginationModel.TotalPages > 1)
+{
+    <div class="pagination-container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- Previous Button -->
+                <li class="page-item @(paginationModel.HasPreviousPage == false ? "disabled" : "")">
+                    @if (paginationModel.HasPreviousPage)
+                    {
+                        @if (isAdmin)
+                        {
+                            <a class="page-link" asp-area="Admin" asp-controller="@controller" asp-action="@action" 
+                               asp-route-page="@(paginationModel.PageIndex - 1)"
+                               asp-route-searchString="@ViewData["SearchString"]"
+                               title="Go to previous page">
+                                ← Previous
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="@controller" asp-action="@action" 
+                               asp-route-page="@(paginationModel.PageIndex - 1)"
+                               asp-route-searchString="@ViewData["SearchString"]"
+                               title="Go to previous page">
+                                ← Previous
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <span class="page-link" title="No previous page">← Previous</span>
+                    }
+                </li>
+
+                <!-- Page Numbers -->
+                @{
+                    int startPage = Math.Max(1, paginationModel.PageIndex - 2);
+                    int endPage = Math.Min(paginationModel.TotalPages, paginationModel.PageIndex + 2);
+                    
+                    if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            @if (isAdmin)
+                            {
+                                <a class="page-link" asp-area="Admin" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="1"
+                                   asp-route-searchString="@ViewData["SearchString"]">1</a>
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="1"
+                                   asp-route-searchString="@ViewData["SearchString"]">1</a>
+                            }
+                        </li>
+                        if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == paginationModel.PageIndex ? "active" : "")">
+                            @if (isAdmin)
+                            {
+                                <a class="page-link" asp-area="Admin" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="@i"
+                                   asp-route-searchString="@ViewData["SearchString"]">@i</a>
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="@i"
+                                   asp-route-searchString="@ViewData["SearchString"]">@i</a>
+                            }
+                        </li>
+                    }
+
+                    if (endPage < paginationModel.TotalPages)
+                    {
+                        if (endPage < paginationModel.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            @if (isAdmin)
+                            {
+                                <a class="page-link" asp-area="Admin" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="@paginationModel.TotalPages"
+                                   asp-route-searchString="@ViewData["SearchString"]">@paginationModel.TotalPages</a>
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="@controller" asp-action="@action"
+                                   asp-route-page="@paginationModel.TotalPages"
+                                   asp-route-searchString="@ViewData["SearchString"]">@paginationModel.TotalPages</a>
+                            }
+                        </li>
+                    }
+                }
+
+                <!-- Next Button -->
+                <li class="page-item @(paginationModel.HasNextPage == false ? "disabled" : "")">
+                    @if (paginationModel.HasNextPage)
+                    {
+                        @if (isAdmin)
+                        {
+                            <a class="page-link" asp-area="Admin" asp-controller="@controller" asp-action="@action"
+                               asp-route-page="@(paginationModel.PageIndex + 1)"
+                               asp-route-searchString="@ViewData["SearchString"]"
+                               title="Go to next page">
+                                Next →
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="@controller" asp-action="@action"
+                               asp-route-page="@(paginationModel.PageIndex + 1)"
+                               asp-route-searchString="@ViewData["SearchString"]"
+                               title="Go to next page">
+                                Next →
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <span class="page-link" title="No next page">Next →</span>
+                    }
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Page Info -->
+        <div class="pagination-info text-muted mt-2">
+            <small>
+                Page <strong>@paginationModel.PageIndex</strong> of <strong>@paginationModel.TotalPages</strong> 
+                (Total: <strong>@paginationModel.TotalCount</strong> items, 
+                Showing @((paginationModel.PageIndex - 1) * paginationModel.PageSize + 1) 
+                to @Math.Min(paginationModel.PageIndex * paginationModel.PageSize, paginationModel.TotalCount))
+            </small>
+        </div>
+    </div>
+}

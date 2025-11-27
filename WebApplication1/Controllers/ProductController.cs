@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Helpers;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -9,6 +10,7 @@ namespace WebApplication1.Controllers;
 public class ProductController : Controller
 {
     private readonly AppDBContext _context;
+    private const int PageSize = 12; // Items per page
 
     public ProductController(AppDBContext context)
     {
@@ -29,8 +31,11 @@ public class ProductController : Controller
     }
 
     [HttpGet("ListPro/{id}")]
-    public IActionResult ListPro(int id)
+    public IActionResult ListPro(int id, int page = 1)
     {
+        // Validate page number
+        if (page < 1) page = 1;
+        
         // Get child Category
         var childCategoryIds = _context.Categories
             .Where(c => c.ParentId == id)
@@ -40,11 +45,23 @@ public class ProductController : Controller
         childCategoryIds.Add(id);
     
         // Get all Product of current Category or child Category
-        var products = _context.Products
-            .Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value))
+        var query = _context.Products
+            .Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value));
+        
+        var totalCount = query.Count();
+        
+        // Calculate pagination
+        var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+        
+        var products = query
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
             .ToList();
+        
+        var paginatedList = new PaginatedList<Product>(products, totalCount, page, PageSize);
     
-        return View("../Shop/Index", products);
+        return View("../Shop/Index", paginatedList);
     }
     
     // [HttpGet("{slug}")]

@@ -1,27 +1,21 @@
-﻿@model List<WebApplication1.Models.Product>
+﻿@model WebApplication1.Helpers.PaginatedList<WebApplication1.Models.Product>
 @{
     Layout = "_LayoutShop";
 }
 
-@if (Model == null || !Model.Any())
+@if (Model == null || !Model.Items.Any())
 {
     <h3>No products found.</h3>
 }
 else
 {
     <div class="row">
-        @foreach (var product in Model)
+        @foreach (var product in Model.Items)
         {
             @await Html.PartialAsync("_ProductItem", product)
         }
     </div>
 
-    <div class="apple-pagination">
-        <a href="#">&lt;</a>
-        <span class="active">1</span>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">&gt;</a>
-    </div>
+    <!-- Render Pagination -->
+    @await Html.PartialAsync("_Pagination", Model)
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Helpers;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -11,6 +12,8 @@ public class ShopController : Controller
 {
     private readonly ILogger<ShopController> _logger;
     private readonly AppDBContext _context;
+    private const int PageSize = 12; // Items per page
+    
     public ShopController(ILogger<ShopController> logger, AppDBContext context)
     {
         _logger = logger;
@@ -18,10 +21,25 @@ public class ShopController : Controller
     }
 
     [HttpGet("")]
-    public IActionResult Index()
+    public IActionResult Index(int page = 1)
     {
-        List<Product> products = _context.Products.ToList();
-        return View(products);
+        // Validate page number
+        if (page < 1) page = 1;
+        
+        var query = _context.Products.AsQueryable();
+        var totalCount = query.Count();
+        
+        // Calculate pagination
+        var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+        
+        var products = query
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+        
+        var paginatedList = new PaginatedList<Product>(products, totalCount, page, PageSize);
+        return View(paginatedList);
     }
     
     

@@ -1,4 +1,4 @@
-@model IEnumerable<WebApplication1.Models.Product>
+@model WebApplication1.Helpers.PaginatedList<WebApplication1.Models.Product>
 
 @{
     ViewData["Title"] = "Manage Products";
@@ -13,7 +13,7 @@
 
 <form asp-area="Admin" asp-controller="Product" asp-action="Index" method="get">
     <p>
-        Title: <input type="text" name="SearchString" />
+        Title: <input type="text" name="SearchString" value="@ViewData["SearchString"]" />
         <input type="submit" value="Filter" class="btn btn-secondary" />
     </p>
 </form>
@@ -22,22 +22,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Category)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Picture)
+                @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Picture)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -62,3 +62,6 @@
 }
     </tbody>
 </table>
+
+<!-- Render Pagination -->
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml", Model)
