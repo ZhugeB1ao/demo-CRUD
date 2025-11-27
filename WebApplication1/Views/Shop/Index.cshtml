@@ -1,28 +1,27 @@
 ﻿@model List<WebApplication1.Models.Product>
 @{
-	Layout = "_LayoutShop";
+    Layout = "_LayoutShop";
 }
 
 @if (Model == null || !Model.Any())
 {
-	<h3>No products found.</h3>
+    <h3>No products found.</h3>
 }
 else
 {
-	<div class="row">
-		@foreach (var product in Model)
-		{
-			@await Html.PartialAsync("_ProductItem", product)
-		}
-	</div>
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            @await Html.PartialAsync("_ProductItem", product)
+        }
+    </div>
 
-	<div class="apple-pagination">
-		<a href="#">&lt;</a>
-		<span class="active">1</span>
-		<a href="#">2</a>
-		<a href="#">3</a>
-		<a href="#">4</a>
-		<a href="#">&gt;</a>
-	</div>
+    <div class="apple-pagination">
+        <a href="#">&lt;</a>
+        <span class="active">1</span>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">&gt;</a>
+    </div>
 }
-

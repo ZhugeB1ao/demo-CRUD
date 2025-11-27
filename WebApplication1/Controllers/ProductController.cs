@@ -27,7 +27,7 @@ public class ProductController : Controller
         product = _context.Products.Find(id);
         return View(product);
     }
-    
+
     [HttpGet("ListPro/{id}")]
     public IActionResult ListPro(int id)
     {
@@ -38,12 +38,12 @@ public class ProductController : Controller
             .ToList();
         
         childCategoryIds.Add(id);
-
+    
         // Get all Product of current Category or child Category
         var products = _context.Products
             .Where(p => p.CategoryId.HasValue && childCategoryIds.Contains(p.CategoryId.Value))
             .ToList();
-
+    
         return View("../Shop/Index", products);
     }
     
