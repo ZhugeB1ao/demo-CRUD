@@ -24,7 +24,7 @@
                 <tbody>
                     @foreach (var order in Model)
                     {
-                        var itemCount = order.OrderProducts?.Count ?? 0;
+                        var itemCount = order.OrderProducts?.Sum(op => op.Quantity) ?? 0;
                         <tr style="cursor: pointer;" data-order-id="@order.Id" onclick="toggleOrderDetails(@order.Id)">
                             <td>
                                 <strong>@order.CreatedAt?.ToString("MMM dd, yyyy")</strong>
@@ -34,6 +34,7 @@
                             </td>
                             <td>
                                 <strong style="font-size: 16px;">$@order.Total.ToString("F2")</strong>
+                                @* <strong style="font-size: 16px;">$0.00</strong> *@
                             </td>
                             <td>
                                 @{
@@ -70,7 +71,8 @@
                                                             <small class="text-secondary">Qty: @item.Quantity × $@product?.Price.ToString("F2")</small>
                                                         </div>
                                                         <div style="text-align: right; margin-left: 16px;">
-                                                            <strong>$@subtotal.ToString("F2")</strong>
+                                                            <strong>$@subtotal.ToString("N2")</strong>
+                                                            @* <strong>$0.00</strong> *@
                                                         </div>
                                                     </li>
                                                 }

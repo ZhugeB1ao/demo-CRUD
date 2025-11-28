@@ -11,17 +11,17 @@ namespace WebApplication1.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "PaymentDate",
-                table: "Orders");
+            // migrationBuilder.DropColumn(
+            //     name: "PaymentDate",
+            //     table: "Orders");
 
-            migrationBuilder.DropColumn(
-                name: "PaymentMethod",
-                table: "Orders");
+            // migrationBuilder.DropColumn(
+            //     name: "PaymentMethod",
+            //     table: "Orders");
 
-            migrationBuilder.DropColumn(
-                name: "ShippingAddress",
-                table: "Orders");
+            // migrationBuilder.DropColumn(
+            //     name: "ShippingAddress",
+            //     table: "Orders");
         }
 
         /// <inheritdoc />

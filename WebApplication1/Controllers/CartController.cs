@@ -21,10 +21,6 @@ public class CartController : Controller
         _userManager = userManager;
     }
 
-    /// <summary>
-    /// Display cart page
-    /// </summary>
-
     [HttpGet("")]
     public IActionResult Index()
     {
@@ -44,10 +40,7 @@ public class CartController : Controller
 
         return View(order);
     }
-
-    /// <summary>
-    /// Add product to cart
-    /// </summary>
+    
     [HttpPost("Add")]
     public IActionResult AddToCart(int productId, int quantity = 1)
     {
@@ -85,9 +78,6 @@ public class CartController : Controller
         return RedirectToAction("Index", "Shop");
     }
 
-    /// <summary>
-    /// Increment quantity by 1
-    /// </summary>
     [HttpPost("Increment")]
     public IActionResult IncrementQuantity(int productId)
     {
@@ -102,10 +92,7 @@ public class CartController : Controller
 
         return RedirectToAction("Index");
     }
-
-    /// <summary>
-    /// Decrement quantity by 1
-    /// </summary>
+    
     [HttpPost("Decrement")]
     public IActionResult DecrementQuantity(int productId)
     {
@@ -132,9 +119,6 @@ public class CartController : Controller
         return RedirectToAction("Index");
     }
 
-    /// <summary>
-    /// Update quantity directly
-    /// </summary>
     [HttpPost("Update")]
     public IActionResult UpdateQuantity(int productId, int quantity)
     {
@@ -155,9 +139,6 @@ public class CartController : Controller
         return RedirectToAction("Index");
     }
 
-    /// <summary>
-    /// Remove product from cart
-    /// </summary>
     [HttpPost("Remove")]
     public IActionResult RemoveFromCart(int productId)
     {
@@ -172,20 +153,14 @@ public class CartController : Controller
 
         return RedirectToAction("Index");
     }
-
-    /// <summary>
-    /// Clear all items from cart
-    /// </summary>
+    
     [HttpPost("Clear")]
     public IActionResult ClearCart()
     {
         HttpContext.Session.Remove(CartSessionKey);
         return RedirectToAction("Index");
     }
-
-    /// <summary>
-    /// Get cart item count (for displaying in navbar)
-    /// </summary>
+    
     [HttpGet("Count")]
     public IActionResult GetCartCount()
     {
@@ -204,7 +179,11 @@ public class CartController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            // Redirect to login page
+            // Check if this is an AJAX request
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = false, message = "Please login to checkout", redirectUrl = Url.Action("Login", "User") });
+            }
             return RedirectToAction("Login", "User");
         }
 
@@ -212,6 +191,10 @@ public class CartController : Controller
         var cart = GetCart();
         if (cart.Count == 0)
         {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = false, message = "Your cart is empty!" });
+            }
             TempData["Error"] = "Your cart is empty!";
             return RedirectToAction("Index");
         }
@@ -264,16 +247,41 @@ public class CartController : Controller
             // Save all order products and update order
             await _context.SaveChangesAsync();
 
-            // Clear the cart from session
+            // Clear the cart from session - IMPORTANT: Do this AFTER successful save
             HttpContext.Session.Remove(CartSessionKey);
+            // Explicitly commit the session changes
+            await HttpContext.Session.CommitAsync();
+
+            // Get user address for notification
+            string userAddress = user.Address ?? "your registered address";
+            
+            // Check if this is an AJAX request
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new 
+                { 
+                    success = true, 
+                    message = "Payment successful!",
+                    address = userAddress,
+                    orderTotal = total,
+                    orderId = order.Id
+                });
+            }
 
             // Redirect to success page or back to shop
             TempData["Success"] = "Order placed successfully!";
             return RedirectToAction("Index", "Shop");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            TempData["Error"] = "An error occurred while placing the order. Please try again.";
+            // Log the error for debugging
+            Console.WriteLine($"Checkout error: {ex.Message}");
+            
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+            TempData["Error"] = $"An error occurred: {ex.Message}";
             return RedirectToAction("Index");
         }
     }

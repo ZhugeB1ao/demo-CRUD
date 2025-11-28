@@ -1,16 +1,13 @@
 <div class="col-sm-6 col-md-6 col-lg-4 mb-4">
     <div class="apple-product-card">
-        <a href="/Product/Detail/@Model.Id" class="apple-product-image-wrapper"
-           style="display:flex; justify-content:center; align-items:center; height:200px; overflow:hidden;">
-            <img asp-src="@Model.Picture" alt="@Model.Name"
-                 style="max-width:100%; max-height:100%; object-fit:contain;" />
+        <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="apple-product-image-wrapper">
+            <img class="apple-product-image" src="@Model.Picture" alt="@Model.Name" onerror="this.onerror=null; this.src='/images/placeholder.svg';">
         </a>
-        <div class="apple-product-info mt-2">
-            <a href="/Product/Detail/@Model.Id" class="apple-product-name">@Model.Name</a>
+        <div class="apple-product-info">
+            <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="apple-product-name">@Model.Name</a>
             <div class="apple-product-price">$@Model.Price</div>
-            <div class="apple-product-actions mt-1">
-                <a href="/Product/Detail/@Model.Id" class="apple-btn apple-btn-primary"
-                   style="flex:1; text-align:center;">View Details</a>
+            <div class="apple-product-actions">
+                <a asp-controller="Product" asp-action="Detail" asp-route-id="@Model.Id" class="apple-btn apple-btn-primary" style="flex: 1; text-align: center;">View Details</a>
             </div>
         </div>
     </div>
