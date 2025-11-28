@@ -655,3 +655,92 @@ body {
 .ftco-section {
     padding: var(--spacing-xl) 0;
 }
+
+/* ========================================
+   17. POPUP / MODAL STYLES
+   ======================================== */
+.apple-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.apple-popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.apple-popup {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.apple-popup-overlay.show .apple-popup {
+    transform: scale(1) translateY(0);
+}
+
+.apple-popup-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.apple-popup-icon i {
+    font-size: 48px;
+    color: white;
+}
+
+.apple-popup-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 12px;
+}
+
+.apple-popup-message {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+}
+
+.apple-popup-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+.apple-popup-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}

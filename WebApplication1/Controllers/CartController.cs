@@ -48,6 +48,10 @@ public class CartController : Controller
         
         if (product == null)
         {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { success = false, message = "Product not found" });
+            }
             return NotFound("Product not found");
         }
 
@@ -73,6 +77,18 @@ public class CartController : Controller
         }
 
         SaveCart(cart);
+        
+        // Check if this is an AJAX request
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+        {
+            var totalItems = cart.Sum(c => c.Quantity ?? 0);
+            return Json(new { 
+                success = true, 
+                message = $"Added {product.Name} to cart!",
+                productName = product.Name,
+                cartCount = totalItems
+            });
+        }
         
         TempData["SuccessMessage"] = $"Add success full {product.Name}";
         return RedirectToAction("Index", "Shop");

@@ -2,6 +2,13 @@
 
 <section class="apple-section" style="padding-top: 40px;">
     <div class="container">
+        <!-- Breadcrumb / Back Button -->
+        <div style="margin-bottom: 24px;">
+            <a asp-controller="Shop" asp-action="Index" class="apple-btn apple-btn-text" style="padding: 0; font-size: 17px;">
+                <i class="ion-ios-arrow-back"></i> Back to Shop
+            </a>
+        </div>
+        
         <div class="row">
             <div class="col-lg-6 mb-4">
                 <img src="@Model.Picture" class="apple-product-detail-image" alt="@Model.Name" onerror="this.onerror=null; this.src='/images/placeholder.svg';">
@@ -37,14 +44,9 @@
                         <input type="hidden" name="quantity" value="1" />
                         
                         <div class="d-flex" style="gap: 16px;">
-                            <button type="submit" class="apple-btn apple-btn-primary" style="flex: 1; padding: 16px; font-size: 17px;">Add to Cart</button>
-                            @* <a href="#" class="apple-btn apple-btn-secondary" style="padding: 16px 24px;"> *@
-                            @*     <i class="ion-ios-heart-outline"></i> *@
-                            @* </a> *@
+                            <button type="submit" class="apple-btn apple-btn-primary" id="addToCartBtn" style="flex: 1; padding: 16px; font-size: 17px;">Add to Cart</button>
                         </div>
                     </form>
-
-
 
                     <div style="margin-top: 40px; padding-top: 40px; border-top: 1px solid #d2d2d7;">
                         <h3 class="apple-heading-3">Features</h3>
@@ -61,3 +63,193 @@
         </div>
     </div>
 </section>
+
+<!-- Add to Cart Success Popup -->
+<style>
+    #addToCartPopup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    #addToCartPopup.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    #addToCartPopup .apple-popup {
+        background: white;
+        border-radius: 18px;
+        padding: 40px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s ease;
+    }
+    
+    #addToCartPopup.show .apple-popup {
+        transform: scale(1) translateY(0);
+    }
+    
+    #addToCartPopup .apple-popup-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+    }
+    
+    #addToCartPopup .apple-popup-icon i {
+        font-size: 48px;
+        color: white;
+    }
+    
+    #addToCartPopup .apple-popup-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin-bottom: 12px;
+    }
+    
+    #addToCartPopup .apple-popup-message {
+        font-size: 17px;
+        color: #6e6e73;
+        margin-bottom: 24px;
+    }
+    
+    #addToCartPopup .apple-popup-btn {
+        display: block;
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 17px;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    #addToCartPopup .apple-popup-btn:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div id="addToCartPopup">
+    <div class="apple-popup">
+        <div class="apple-popup-icon">
+            <i class="ion-ios-checkmark"></i>
+        </div>
+        <h3 class="apple-popup-title">Added to Cart!</h3>
+        <p class="apple-popup-message" id="popupMessage">Product has been added to your cart.</p>
+        <div style="display: flex; gap: 12px; flex-direction: column;">
+            <a href="/Cart" class="apple-popup-btn" style="background: #0071e3; color: white; text-decoration: none;">View Cart</a>
+            <button type="button" class="apple-popup-btn" onclick="closeAddToCartPopup()" style="background: #f5f5f7; color: #1d1d1f;">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('addToCartForm');
+            var btn = document.getElementById('addToCartBtn');
+            
+            console.log('Form found:', form);
+            console.log('Button found:', btn);
+            
+            if (form && btn) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    
+                    // Disable button and show loading
+                    btn.disabled = true;
+                    btn.innerHTML = 'Adding...';
+                    
+                    var productId = form.querySelector('input[name="productId"]').value;
+                    var quantity = form.querySelector('input[name="quantity"]').value;
+                    
+                    console.log('Sending request to /Cart/Add with productId:', productId);
+                    
+                    fetch('/Cart/Add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: 'productId=' + productId + '&quantity=' + quantity
+                    })
+                    .then(function(response) {
+                        console.log('Response status:', response.status);
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        console.log('Response data:', data);
+                        if (data.success) {
+                            // Update popup message
+                            document.getElementById('popupMessage').textContent = data.message;
+                            
+                            // Show popup
+                            showAddToCartPopup();
+                        } else {
+                            alert(data.message || 'Error adding to cart');
+                        }
+                        
+                        // Re-enable button
+                        btn.disabled = false;
+                        btn.innerHTML = 'Add to Cart';
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                        
+                        // Re-enable button
+                        btn.disabled = false;
+                        btn.innerHTML = 'Add to Cart';
+                    });
+                });
+            }
+        });
+        
+        function showAddToCartPopup() {
+            console.log('Showing popup');
+            var popup = document.getElementById('addToCartPopup');
+            if (popup) {
+                popup.classList.add('show');
+            }
+        }
+        
+        function closeAddToCartPopup() {
+            var popup = document.getElementById('addToCartPopup');
+            if (popup) {
+                popup.classList.remove('show');
+            }
+        }
+        
+        // Close popup when clicking outside
+        var popupOverlay = document.getElementById('addToCartPopup');
+        if (popupOverlay) {
+            popupOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeAddToCartPopup();
+                }
+            });
+        }
+    </script>
+}
