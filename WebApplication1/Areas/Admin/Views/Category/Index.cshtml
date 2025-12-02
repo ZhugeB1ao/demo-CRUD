@@ -1,0 +1,82 @@
+@model WebApplication1.Helpers.PaginatedList<WebApplication1.Models.Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Manage Categories</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<p>
+    <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<form asp-area="Admin" asp-controller="Category" asp-action="Index" method="get">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input type="text" name="SearchString" value="@ViewData["SearchString"]" class="form-control d-inline-block" style="width: auto;" />
+        <input type="submit" value="Filter" class="btn btn-secondary" />
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Parent Category</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>
+                    @if (item.ParentId != null)
+                    {
+                        <span style="margin-left: 20px;">↳ </span>
+                    }
+                    @item.Name
+                </td>
+                <td>@item.Description</td>
+                <td>@(item.Parent?.Name ?? "-")</td>
+                <td>
+                    @if (item.ParentId == null)
+                    {
+                        <span class="badge bg-primary">Parent</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Child</span>
+                    }
+                </td>
+                <td>
+                    <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml", Model)
